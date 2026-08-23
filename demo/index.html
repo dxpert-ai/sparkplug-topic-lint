@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Sparkplug B topic linter — demo</title>
+<style>
+  :root{--bg:#0b0d10;--paper:#12151a;--text:#e6e9ee;--muted:#8a919c;--accent:#4da3ff;--ok:#3ecf8e;--warn:#e2b93b;--err:#e2543b;--line:#232830}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 -apple-system,Segoe UI,Roboto,sans-serif;padding:32px 20px}
+  .wrap{max-width:720px;margin:0 auto}
+  h1{font-size:22px;margin:0 0 6px}
+  p.lead{color:var(--muted);margin:0 0 24px}
+  label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+  input{width:100%;padding:10px 12px;background:var(--paper);border:1px solid var(--line);border-radius:8px;color:var(--text);font:14px/1.4 ui-monospace,Consolas,monospace}
+  .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  button{background:var(--paper);border:1px solid var(--line);color:var(--text);padding:8px 14px;border-radius:8px;cursor:pointer;font-size:13px}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#08111c;font-weight:600}
+  button:hover{filter:brightness(1.15)}
+  .out{margin-top:20px;display:flex;flex-direction:column;gap:8px}
+  .line{padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);display:flex;gap:10px;align-items:baseline}
+  .line.fail{border-color:#5a2a24}
+  .line.warn{border-color:#5a4a1e}
+  .line.pass{border-color:#1e5a3f}
+  .line.info{opacity:.8}
+  .tag{font-size:11px;font-weight:700;letter-spacing:.04em;padding:2px 6px;border-radius:4px;flex:0 0 auto}
+  .fail .tag{background:#3a1c17;color:var(--err)}
+  .warn .tag{background:#3a3014;color:var(--warn)}
+  .pass .tag{background:#123a29;color:var(--ok)}
+  .info .tag{background:#1c222b;color:var(--muted)}
+  code{background:#1c222b;padding:1px 5px;border-radius:4px;font:12px ui-monospace,Consolas,monospace}
+  .note{margin-top:18px;font-size:13px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Sparkplug B topic linter</h1>
+  <p class="lead">Paste an MQTT topic. Get every violation of the Sparkplug B topic grammar, with plain-language explanations. Runs entirely in this page — nothing is sent anywhere.</p>
+
+  <label for="sp-topic">MQTT topic to lint</label>
+  <input id="sp-topic" type="text" spellcheck="false" placeholder="spBv1.0/Montreal/DDATA/Line-1/Press-01"/>
+  <div class="row">
+    <button class="primary" id="lint-btn">Lint topic</button>
+    <button id="ex-valid">Valid example</button>
+    <button id="ex-broken">Broken example</button>
+    <button id="ex-state">STATE example</button>
+  </div>
+
+  <div id="sp-out" class="out" aria-live="polite"></div>
+
+  <p class="note">Grammar checked: <code>spBv1.0/{group_id}/{message_type}/{edge_node_id}[/{device_id}]</code> and <code>spBv1.0/STATE/{host_id}</code> (Sparkplug 3.0).</p>
+</div>
+
+<script type="module">
+  import { lintTopic } from '../src/index.js';
+
+  const input = document.getElementById('sp-topic');
+  const out = document.getElementById('sp-out');
+
+  function esc(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/&lt;code&gt;/g, '<code>').replace(/&lt;\/code&gt;/g, '</code>');
+  }
+
+  function render() {
+    const findings = lintTopic(input.value);
+    out.innerHTML = findings.map((f) =>
+      `<div class="line ${f.kind}"><span class="tag">${f.label}</span><span>${esc(f.message)}</span></div>`
+    ).join('');
+  }
+
+  document.getElementById('lint-btn').addEventListener('click', render);
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') render(); });
+
+  document.getElementById('ex-valid').addEventListener('click', () => {
+    input.value = 'spBv1.0/Montreal/DDATA/Line-1/Press-01';
+    render();
+  });
+  document.getElementById('ex-broken').addEventListener('click', () => {
+    input.value = 'spBv1.0/Montreal/DATA/Line 1/Press-01/Motor';
+    render();
+  });
+  document.getElementById('ex-state').addEventListener('click', () => {
+    input.value = 'spBv1.0/STATE/scada-host-01';
+    render();
+  });
+</script>
+</body>
+</html>

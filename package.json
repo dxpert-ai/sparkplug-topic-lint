@@ -1,0 +1,42 @@
+{
+  "name": "@dxpert/sparkplug-topic-lint",
+  "version": "0.1.0",
+  "description": "Validate MQTT topics against the Sparkplug B topic grammar (Sparkplug 3.0) - browser module, CLI, and demo page.",
+  "license": "MIT",
+  "type": "module",
+  "main": "src/index.js",
+  "module": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "bin": {
+    "sparkplug-topic-lint": "bin/cli.js"
+  },
+  "files": [
+    "src",
+    "bin",
+    "demo",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node test/run.js"
+  },
+  "dependencies": {},
+  "keywords": [
+    "sparkplug",
+    "sparkplug-b",
+    "mqtt",
+    "uns",
+    "unified-namespace",
+    "industrial-iot",
+    "iiot",
+    "linter"
+  ],
+  "homepage": "https://dxpert.ai/tools.html",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dxpert-ai/sparkplug-topic-lint.git"
+  },
+  "author": "DXP Technologies inc. (https://dxpert.ai)"
+}
