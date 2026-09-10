@@ -1,6 +1,6 @@
 {
   "name": "@dxpert/sparkplug-topic-lint",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Validate MQTT topics against the Sparkplug B topic grammar (Sparkplug 3.0) - browser module, CLI, and demo page.",
   "license": "MIT",
   "type": "module",
